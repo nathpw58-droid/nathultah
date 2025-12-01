@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halo Nath</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            animation: fadeIn 2s ease;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .message {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .heart-btn {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        .heart-btn:hover {
+            background: #ff2e4d;
+            transform: scale(1.05);
+        }
+
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff4d6d;
+            transform: rotate(45deg);
+            opacity: 0;
+        }
+
+        .heart:before, .heart:after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: #ff4d6d;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart:after {
+            top: 0;
+            left: -10px;
+        }
+
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .music-control i {
+            font-size: 1.5rem;
+            color: #ff4d6d;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(45deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(45deg); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .message { font-size: 1.2rem; }
+            .container { margin: 20px; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="hearts-container" id="heartsContainer"></div>
+    
+    <div class="container">
+        <h1>Halo Nath</h1>
+        <div class="message">
+            <p>Selamat Ulang Tahun</p>
+            <p>Maaf Telat Ngucapinnhya</p>
+            <p>Traktirannya ngentot Ya Bebih</p>
+        </div>
+        <button class="heart-btn" id="loveBtn">
+            <i class="fas fa-heart"></i> yok kapan....?????
+        </button>
+    </div>
+    
+    <div class="music-control" id="musicControl">
+        <i class="fas fa-play" id="musicIcon"></i>
+    </div>
+    
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung elemen audio.
+    </audio>
+
+    <script>
+        // Musik latar
+        const bgMusic = document.getElementById('bgMusic');
+        const musicControl = document.getElementById('musicControl');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+        
+        musicControl.addEventListener('click', function() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicIcon.classList.remove('fa-pause');
+                musicIcon.classList.add('fa-play');
+            } else {
+                bgMusic.play();
+                musicIcon.classList.remove('fa-play');
+                musicIcon.classList.add('fa-pause');
+            }
+            isPlaying = !isPlaying;
+        });
+        
+        // Animasi hati
+        const heartsContainer = document.getElementById('heartsContainer');
+        const loveBtn = document.getElementById('loveBtn');
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            
+            // Posisi acak
+            const posX = Math.random() * window.innerWidth;
+            heart.style.left = `${posX}px`;
+            heart.style.bottom = '-20px';
+            
+            // Warna hati acak
+            const colors = ['#ff4d6d', '#ff8fa3', '#ffb3c1', '#ffccd5'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            heart.style.background = color;
+            heart.style.setProperty('--heart-color', color);
+            
+            // Ukuran hati acak
+            const size = Math.random() * 20 + 10;
+            heart.style.width = `${size}px`;
+            heart.style.height = `${size}px`;
+            
+            heartsContainer.appendChild(heart);
+            
+            // Animasi
+            const animationDuration = Math.random() * 3 + 5;
+            heart.style.animation = `float ${animationDuration}s linear forwards`;
+            
+            // Hapus elemen setelah animasi selesai
+            setTimeout(() => {
+                heart.remove();
+            }, animationDuration * 1000);
+        }
+        
+        // Buhat hati secara berkala
+        setInterval(createHeart, 300);
+        
+        // Tambah lebih banyak hati saat tombol diklik
+        loveBtn.addEventListener('click', function() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(createHeart, i * 100);
+            }
+            
+            // Efek tombol
+            loveBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                loveBtn.style.transform = 'scale(1)';
+            }, 200);
+        });
+        
+        // Responsif terhadap resize window
+        window.addEventListener('resize', function() {
+            // Hapus semua hati yang ada
+            while (heartsContainer.firstChild) {
+                heartsContainer.removeChild(heartsContainer.firstChild);
+            }
+        });
+    </script>
+</body>
+</html>
